@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Tài Chính Cá Nhân</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<!-- Header -->
+<nav class="bg-indigo-700 text-white p-3 shadow">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+        <div class="font-semibold text-lg flex items-center gap-2">
+            <span>📒 Tài Chính Cá Nhân K24_Rikkei</span>
+        </div>
+        <div class="relative">
+            <button id="userMenuButton" class="hover:underline text-sm flex items-center gap-2">
+                <span id="currentUsername"> Tài khoản</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg z-10">
+                <a href="#" onclick="openChangeForm()" class="block px-4 py-2 text-sm hover:bg-gray-200">Đổi mật
+                    khẩu</a>
+                <a href="#" onclick="logout()" class="block px-4 py-2 text-sm hover:bg-gray-200">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<section class="relative w-full max-w-3xl mx-auto mt-4 mb-6">
+    <div class="overflow-hidden rounded-xl shadow">
+        <div id="slider" class="flex transition-transform duration-700">
+            <!-- Slide 1 -->
+            <div class="min-w-full bg-indigo-600 text-white p-8 text-center">
+                <h2 class="text-2xl font-bold mb-2">🎯 Kiểm soát chi tiêu thông minh</h2>
+                <p class="text-sm">Theo dõi ngân sách và thu chi hằng tháng dễ dàng</p>
+            </div>
+            <!-- Slide 2 -->
+            <div class="min-w-full bg-purple-600 text-white p-8 text-center">
+                <h2 class="text-2xl font-bold mb-2">📊 Thống kê rõ ràng</h2>
+                <p class="text-sm">Xem nhanh tình hình tài chính cá nhân theo từng danh mục</p>
+            </div>
+            <!-- Slide 3 -->
+            <div class="min-w-full bg-pink-600 text-white p-8 text-center">
+                <h2 class="text-2xl font-bold mb-2">💡 Cảnh báo thông minh</h2>
+                <p class="text-sm">Nhận cảnh báo khi chi tiêu vượt mức giới hạn</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút điều hướng -->
+
+</section>
+<!-- Phân trang -->
+<!-- navbar.html -->
+
+
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-3xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-6 text-indigo-600">📊 Quản Lý Tài Chính Cá Nhân</h1>
+
+        <!-- Chọn tháng -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6 text-center">
+            <label class="text-sm text-gray-500 mr-2">📅 Chọn tháng:</label>
+            <input type="month" id="monthSelector" class="border p-2 rounded" />
+        </div>
+
+        <!-- Ngân sách tháng -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6 text-center">
+            <label class="text-sm text-gray-500 mr-2">💰 Ngân sách tháng:</label>
+            <input type="number" id="monthlyBudgetInput" class="border p-2 rounded w-48" placeholder="VD: 5000000" />
+            <button id="saveBudgetBtn"
+                class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Lưu</button>
+            <p id="budgetStatus" class="mt-2 text-sm font-medium"></p>
+        </div>
+
+        <!-- Số dư -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6 text-center">
+            <p class="text-gray-500">Số tiền còn lại</p>
+            <p id="balance" class="text-2xl font-semibold text-green-500">0 VND</p>
+        </div>
+
+
+        <!-- Quản lý danh mục -->
+        <div class="bg-white p-4 rounded-xl shadow mb-6">
+            <h2 class="text-lg font-semibold mb-2">💼 Quản lý danh mục (theo tháng)</h2>
+
+            <!-- Form thêm danh mục -->
+            <form id="categoryForm" class="flex flex-col md:flex-row gap-2 mb-4">
+                <input id="newCategoryName" type="text" placeholder="Tên danh mục" class="p-2 border rounded flex-1" />
+                <input id="newCategoryLimit" type="number" placeholder="Giới hạn (VND)"
+                    class="p-2 border rounded flex-1" />
+                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Thêm danh mục</button>
+            </form>
+
+            <!-- Form sửa danh mục -->
+            <form id="editCategoryForm" class=" flex hidden flex-col md:flex-row gap-2 mb-4">
+                <input id="editCategoryOldName" type="hidden" />
+                <input id="editCategoryNewName" type="text" placeholder="Tên mới" class="p-2 border rounded flex-1" />
+                <input id="editCategoryNewLimit" type="number" placeholder="Giới hạn mới (VND)"
+                    class="p-2 border rounded flex-1" />
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Lưu chỉnh sửa</button>
+            </form>
+
+            <!-- Danh sách danh mục -->
+            <ul id="categoryList" class="space-y-2 text-sm text-gray-700">
+                <li class="flex justify-between border-b">
+                    <span>tiền phòng - Giới hạn: <strong>2,000,000 VND</strong></span>
+                    <div>
+                        <button class="text-red-600 text-xs">Sửa</button>
+                        <button onclick="deleteCategory('tiền phòng')" class="text-red-600 text-xs">Xóa</button>
+
+                    </div>
+
+                </li>
+                <li class="flex justify-between border-b">
+                    <span>tiền ăn - Giới hạn: <strong>1,000,000 VND</strong></span>
+                    <div>
+                        <button class="text-red-600 text-xs">Sửa</button>
+                        <button onclick="deleteCategory('tiền ăn')" class="text-red-600 text-xs">Xóa</button>
+
+                    </div>
+
+                </li>
+                <li class="flex justify-between border-b">
+                    <span>tiền xăng xe - Giới hạn: <strong>500,000 VND</strong></span>
+                    <div>
+                        <button class="text-red-600 text-xs">Sửa</button>
+                        <button onclick="deleteCategory('tiền xăng xe')" class="text-red-600 text-xs">Xóa</button>
+
+                    </div>
+
+                </li>
+                <li class="flex justify-between border-b">
+                    <span>tiền mua sắm - Giới hạn: <strong>1,000,000 VND</strong></span>
+                    <div>
+                        <button class="text-red-600 text-xs">Sửa</button>
+                        <button onclick="deleteCategory('tiền mua sắm')" class="text-red-600 text-xs">Xóa</button>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- Giao dịch -->
+        <form id="transactionForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-white p-4 rounded-xl shadow">
+            <input id="amount" type="number" placeholder="Số tiền" class="p-2 border rounded col-span-1" required />
+            <select id="category" class="p-2 border rounded col-span-1">
+                <option value="Thu nhập">Tiền chi tiêu</option>
+            </select>
+            <input id="note" type="text" placeholder="Ghi chú" class="p-2 border rounded col-span-1" />
+            <button class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">Thêm</button>
+        </form>
+
+        <!-- Lịch sử giao dịch -->
+        <div class="bg-white p-4 rounded-xl shadow mb-6">
+            <button class="text-lg font-semibold mb-2 text-red-500">🧾 Lịch sử giao dịch</button>
+            <ul id="transactionList" class="space-y-2 text-sm text-gray-700">
+                <li class="flex justify-between items-center border-b pb-1">
+                    <span>tiền phòng - đóng tiền phòng tháng 3: <strong>2,000,000 VND</strong></span>
+                    <button onclick="deleteTx(0)" class="text-red-600 text-xl">Xoá</button>
+                </li>
+                <li class="flex justify-between items-center border-b pb-1">
+                    <span>tiền xăng xe - đổ xăng 21/3: <strong>100,000 VND</strong></span>
+                    <button onclick="deleteTx(1)" class="text-red-600 text-xl">Xoá</button>
+                </li>
+                <li class="flex justify-between items-center border-b pb-1">
+                    <span>tiền ăn - trà sữa: <strong>30,000 VND</strong></span>
+                    <button onclick="deleteTx(2)" class="text-red-600 text-xl">Xoá</button>
+                </li>
+                <li class="flex justify-between items-center border-b pb-1">
+                    <span>tiền ăn - bánh mì: <strong>30,000 VND</strong></span>
+                    <button onclick="deleteTx(3)" class="text-red-600 text-xl">Xoá</button>
+                </li>
+                <li class="flex justify-between items-center border-b pb-1">
+                    <span>tiền ăn - tiền nhậu: <strong>1,000,000 VND</strong></span>
+                    <button onclick="deleteTx(4)" class="text-red-600 text-xl">Xoá</button>
+                </li>
+            </ul>
+            <nav class="mt-4 flex justify-center" aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item active">
+                        <span class="page-link">
+                            2
+                            <span class="sr-only">(current)</span>
+                        </span>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Cảnh báo danh mục vượt mức -->
+        <div id="categoryWarnings" class="bg-white p-4 rounded-xl shadow text-sm text-red-600 font-medium">
+            <p>⚠️ Danh mục "ăn uống" đã vượt giới hạn: 2,150,000 / 2,000,000 VND</p>
+        </div>
+    </div>
+    <!-- Thống kê chi tiêu theo tháng -->
+    <div class="bg-white p-4 rounded-xl shadow mb-6 max-w-3xl mx-auto">
+        <h2 class="text-lg font-semibold mb-2">📆 Thống kê chi tiêu các tháng</h2>
+        <table class="w-full text-sm text-left text-gray-700">
+            <thead>
+                <tr class="border-b">
+                    <th class="py-2">Tháng</th>
+                    <th>Chi tiêu</th>
+                    <th>Ngân sách</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody id="monthlyStatsBody">
+                <tr class="border-b">
+                    <td class="py-2">2025-03</td>
+                    <td>2,150,000 VND</td>
+                    <td>5,000,000</td>
+                    <td><span class="text-green-600 font-medium">✅ Đạt</span></td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2">2025-04</td>
+                    <td>3,100,000 VND</td>
+                    <td>3,000,000</td>
+                    <td><span class="text-red-600 font-medium">⚠️ Vượt</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-indigo-700 text-white text-sm text-center py-4 mt-8">
+        <p>© 2025 Quản Lý Tài Chính Cá Nhân. by Quốc Hai!</p>
+    </footer>
+
+    <script>
+
+        let currentSlide = 0;
+
+        function moveSlide(direction) {
+            const slider = document.getElementById("slider");
+            const totalSlides = slider.children.length;
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        // Tự động chuyển slide mỗi 5s
+        setInterval(() => moveSlide(1), 5000);
+        const form = document.getElementById("transactionForm");
+        const amountInput = document.getElementById("amount");
+        const categoryInput = document.getElementById("category");
+        const noteInput = document.getElementById("note");
+        // const list = document.getElementById("transactionList");
+        const balance = document.getElementById("balance");
+        const monthSelector = document.getElementById("monthSelector");
+
+        const categoryForm = document.getElementById("categoryForm");
+        const newCategoryName = document.getElementById("newCategoryName");
+        const newCategoryLimit = document.getElementById("newCategoryLimit");
+        const categoryList = document.getElementById("categoryList");
+
+        const budgetInput = document.getElementById("monthlyBudgetInput");
+        const saveBudgetBtn = document.getElementById("saveBudgetBtn");
+        const budgetStatus = document.getElementById("budgetStatus");
+        const categoryWarnings = document.getElementById("categoryWarnings");
+
+        let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        let categoriesByMonth = JSON.parse(localStorage.getItem("categoriesByMonth")) || {};
+        let budgetsByMonth = JSON.parse(localStorage.getItem("budgetsByMonth")) || {};
+
+        function getSelectedMonth() {
+            return monthSelector.value || new Date().toISOString().slice(0, 7);
+        }
+
+        function updateCategoriesUI() {
+            const selectedMonth = getSelectedMonth();
+            const categories = categoriesByMonth[selectedMonth] || {};
+
+            categoryInput.innerHTML = '<option value="Thu nhập">Chi Tiêu</option>';
+
+
+            Object.entries(categories).forEach(([name, limit]) => {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                categoryInput.appendChild(option);
+
+                const li = document.createElement("li");
+                li.className = "flex justify-between border-b";
+                li.innerHTML = `
+          <span>${name} - Giới hạn: <strong>${limit.toLocaleString()} VND</strong></span>
+         <div>
+                 <button  class="text-red-600 text-xs">Sửa</button>
+                 <button onclick="deleteCategory('${name}')" class="text-red-600 text-xs">Xóa</button>
+       
+        </div>
+        
+        `;
+                // categoryList.appendChild(li);
+            });
+
+            localStorage.setItem("categoriesByMonth", JSON.stringify(categoriesByMonth));
+        }
+
+        categoryForm.onsubmit = (e) => {
+            e.preventDefault();
+            const name = newCategoryName.value.trim();
+            const limit = parseInt(newCategoryLimit.value);
+            const selectedMonth = getSelectedMonth();
+            if (!name || !limit) return;
+
+            if (!categoriesByMonth[selectedMonth]) {
+                categoriesByMonth[selectedMonth] = {};
+            }
+
+            categoriesByMonth[selectedMonth][name] = limit;
+            newCategoryName.value = "";
+            newCategoryLimit.value = "";
+            updateCategoriesUI();
+        };
+
+        function deleteCategory(name) {
+            const selectedMonth = getSelectedMonth();
+            const categories = categoriesByMonth[selectedMonth];
+            if (categories) {
+                delete categories[name];
+                updateCategoriesUI();
+            }
+        }
+
+        saveBudgetBtn.addEventListener("click", () => {
+            const month = getSelectedMonth();
+            const value = parseInt(budgetInput.value);
+            if (!value || value <= 0) return alert("Vui lòng nhập số dương!");
+            budgetsByMonth[month] = value;
+            localStorage.setItem("budgetsByMonth", JSON.stringify(budgetsByMonth));
+            updateUI();
+        });
+
+        function deleteTx(index) {
+            transactions.splice(index, 1);
+            updateUI();
+        }
+
+        function updateUI() {
+            const selectedMonth = getSelectedMonth();
+            const monthCategories = categoriesByMonth[selectedMonth] || {};
+            const filtered = transactions.filter(tx => tx.month === selectedMonth);
+
+            list.innerHTML = "";
+            categoryWarnings.innerHTML = "";
+            let total = 0;
+            const categorySums = {};
+
+            filtered.forEach((tx, index) => {
+                const li = document.createElement("li");
+                li.className = "flex justify-between items-center border-b pb-1";
+                li.innerHTML = `
+          <span>${tx.category} - ${tx.note || "Không ghi chú"}: <strong>${tx.amount.toLocaleString()} VND</strong></span>
+          <button onclick="deleteTx(${transactions.indexOf(tx)})" class="text-red-600 text-xl">Xoá</button>
+        `;
+
+                if (tx.category === "Thu nhập") total += tx.amount;
+                else total -= tx.amount;
+
+                if (tx.category !== "Thu nhập") {
+                    categorySums[tx.category] = (categorySums[tx.category] || 0) + tx.amount;
+                }
+
+                list.appendChild(li);
+
+            });
+
+            balance.textContent = `${total.toLocaleString()} VND`;
+            localStorage.setItem("transactions", JSON.stringify(transactions));
+
+            // Tổng chi tháng & cảnh báo ngân sách
+            const totalExpenses = filtered.filter(tx => tx.category !== "Thu nhập")
+                .reduce((sum, tx) => sum + tx.amount, 0);
+            const budget = budgetsByMonth[selectedMonth];
+            budgetInput.value = budget || "";
+
+            if (budget) {
+                if (totalExpenses > budget) {
+                    budgetStatus.textContent = `⚠️ Chi tiêu đã vượt ngân sách tháng: ${totalExpenses.toLocaleString()} / ${budget.toLocaleString()} VND`;
+                    budgetStatus.className = "mt-2 text-sm font-medium text-red-600";
+                } else {
+                    budgetStatus.textContent = `✅ Chi tiêu tháng: ${totalExpenses.toLocaleString()} / ${budget.toLocaleString()} VND`;
+                    budgetStatus.className = "mt-2 text-sm font-medium text-green-600";
+                }
+            } else {
+                budgetStatus.textContent = "💡 Bạn chưa đặt ngân sách cho tháng này.";
+                budgetStatus.className = "mt-2 text-sm text-gray-500";
+            }
+
+            // Cảnh báo danh mục vượt mức
+            Object.entries(monthCategories).forEach(([category, limit]) => {
+                const spent = categorySums[category] || 0;
+                if (spent > limit) {
+                    const warn = document.createElement("p");
+
+                }
+            });
+        }
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const amount = parseFloat(amountInput.value);
+            const category = categoryInput.value;
+            const note = noteInput.value;
+            const selectedMonth = getSelectedMonth();
+            if (!amount) return;
+
+            transactions.push({ amount, category, note, month: selectedMonth });
+            amountInput.value = "";
+            noteInput.value = "";
+            updateUI();
+        };
+
+        monthSelector.addEventListener("change", () => {
+            updateCategoriesUI();
+            updateUI();
+        });
+
+        monthSelector.value = new Date().toISOString().slice(0, 7);
+        function renderMonthlyStats() {
+            // const tbody = document.getElementById("monthlyStatsBody");
+            tbody.innerHTML = "";
+
+            const allMonths = Object.keys(budgetsByMonth);
+
+            allMonths.forEach(month => {
+                const monthBudget = budgetsByMonth[month];
+                const expenses = transactions
+                    .filter(tx => tx.month === month && tx.category !== "Thu nhập")
+                    .reduce((sum, tx) => sum + tx.amount, 0);
+
+                const row = document.createElement("tr");
+                row.className = "border-b";
+
+                const status =
+                    expenses > monthBudget
+                        ? `<span class="text-red-600 font-medium">⚠️ Vượt</span>`
+                        : `<span class="text-green-600 font-medium">✅ Đạt</span>`;
+
+                row.innerHTML = `
+      <td class="py-2">${month}</td>
+      <td>${expenses.toLocaleString()} VND</td>
+      <td>${monthBudget?.toLocaleString() || "Chưa đặt"}</td>
+      <td>${monthBudget ? status : '<span class="text-gray-400">-</span>'}</td>
+    `;
+
+                tbody.appendChild(row);
+            });
+        }
+        renderMonthlyStats();
+        updateCategoriesUI();
+        updateUI();
+    </script>
+</body>
+
+</html>
